@@ -7,11 +7,20 @@
 //
 
 import UIKit
+import CoreData
 
 class BucketListViewController: UITableViewController {
-    var items = ["Sky diving", "Live in Hawaii"]
+    
+    var items:[BucketListItem] = []
+    
+    let managedObjectContext =
+        (UIApplication.shared.delegate as! AppDelegate)
+        .persistentContainer
+        .viewContext
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        fetchAllItems()
     // Do any additional setup after loading the view, typically from a nib.
     }
 
@@ -32,7 +41,10 @@ class BucketListViewController: UITableViewController {
             withIdentifier: "MyCell", for: indexPath)
         
         print(cell)
-        cell.textLabel?.text = items[indexPath.row]
+        guard let text = items[indexPath.row].text else {
+            return cell
+        }
+        cell.textLabel?.text = text
         return cell
     }
     
@@ -46,7 +58,15 @@ class BucketListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView,
                             commit editingStyle: UITableViewCellEditingStyle,
                             forRowAt indexPath: IndexPath) {
+        managedObjectContext.delete(items[indexPath.row])
         items.remove(at: indexPath.row)
+        
+        do {
+            try managedObjectContext.save()
+        } catch {
+            print("\(error)")
+        }
+        
         tableView.reloadData()
     }
     
@@ -67,10 +87,20 @@ class BucketListViewController: UITableViewController {
             
             addItemViewController.delegate = self
             addItemViewController.indexPath = indexPath
-            addItemViewController.item = item
+            addItemViewController.item = item.text
         }
     }
     
+    func fetchAllItems() {
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "BucketListItem")
+        do {
+            let result = try managedObjectContext.fetch(request)
+            print(result)
+            items = result as! [BucketListItem]
+        } catch {
+            print("\(error)")
+        }
+    }
 }
 
 // MARK: - AddItemViewControllerDelegate
@@ -86,10 +116,24 @@ extension BucketListViewController: AddItemViewControllerDelegate {
                    at indexPath: IndexPath?) {
         
         if let indexPath = indexPath {
-            items[indexPath.row] = text
+            let item = items[indexPath.row]
+            item.text = text
+            
         } else {
-            items.append(text)
+            print("CREATING ITEM")
+            let item = NSEntityDescription.insertNewObject(
+                forEntityName: "BucketListItem",
+                into: managedObjectContext) as! BucketListItem
+            item.text = text
+            items.append(item)
         }
+        
+        do {
+            try managedObjectContext.save()
+        } catch {
+            print("\(error)")
+        }
+        
         tableView.reloadData()
         
         dismiss(animated: true, completion: nil)

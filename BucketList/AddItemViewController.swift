@@ -29,8 +29,8 @@ class AddItemViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let editItem = item {
-            itemTextField.text = editItem
+        if let item = item {
+            itemTextField.text = item
         }
     }
 
