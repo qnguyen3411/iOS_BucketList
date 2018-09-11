@@ -17,6 +17,7 @@
 		E3C9CC6D214446C20010A506 /* AddItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C9CC6C214446C20010A506 /* AddItemViewController.swift */; };
 		E3C9CC71214461520010A506 /* AddItemViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C9CC70214461520010A506 /* AddItemViewControllerDelegate.swift */; };
 		E3C9CC74214482B80010A506 /* BucketList.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E3C9CC72214482B80010A506 /* BucketList.xcdatamodeld */; };
+		E3C9CDF721481E1A0010A506 /* TaskModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C9CDF621481E1A0010A506 /* TaskModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		E3C9CC6C214446C20010A506 /* AddItemViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemViewController.swift; sourceTree = "<group>"; };
 		E3C9CC70214461520010A506 /* AddItemViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemViewControllerDelegate.swift; sourceTree = "<group>"; };
 		E3C9CC73214482B80010A506 /* BucketList.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = BucketList.xcdatamodel; sourceTree = "<group>"; };
+		E3C9CDF621481E1A0010A506 /* TaskModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +107,7 @@
 			children = (
 				E3C9CC422144410D0010A506 /* Main.storyboard */,
 				E3C9CC402144410D0010A506 /* BucketListViewController.swift */,
+				E3C9CDF621481E1A0010A506 /* TaskModel.swift */,
 				E3C9CC6C214446C20010A506 /* AddItemViewController.swift */,
 				E3C9CC70214461520010A506 /* AddItemViewControllerDelegate.swift */,
 				E3C9CC3E2144410D0010A506 /* AppDelegate.swift */,
@@ -266,6 +269,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E3C9CC71214461520010A506 /* AddItemViewControllerDelegate.swift in Sources */,
+				E3C9CDF721481E1A0010A506 /* TaskModel.swift in Sources */,
 				E3C9CC412144410D0010A506 /* BucketListViewController.swift in Sources */,
 				E3C9CC74214482B80010A506 /* BucketList.xcdatamodeld in Sources */,
 				E3C9CC3F2144410D0010A506 /* AppDelegate.swift in Sources */,

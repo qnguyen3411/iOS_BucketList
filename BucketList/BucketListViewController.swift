@@ -9,29 +9,56 @@
 import UIKit
 import CoreData
 
+class Task {
+    var objective: String
+    var createdAt: String
+    
+    init(objective:String, createdAt: String) {
+        self.objective = objective
+        self.createdAt = createdAt
+    }
+}
+
 class BucketListViewController: UITableViewController {
     
-    var items:[BucketListItem] = []
+    var tasks:[Task] = []
     
     let managedObjectContext =
         (UIApplication.shared.delegate as! AppDelegate)
         .persistentContainer
         .viewContext
     
+    @IBAction func searchButtonPressed(_ sender: UIBarButtonItem) {
+        for task in self.tasks {
+            print(task.objective)
+        }
+    }
+    
     override func viewDidLoad() {
+        TaskModel.getAllTasks() {
+            data, response, error in
+            do {
+                if let tasks = try JSONSerialization.jsonObject(
+                    with: data!,
+                    options: .mutableContainers
+                    ) as? NSDictionary {
+                    self.loadTasks(fromJsonData: tasks)
+                    self.tableView.reloadData()
+                }
+            } catch {
+                print("Something went wrong")
+            }
+        }
         super.viewDidLoad()
-        fetchAllItems()
-    // Do any additional setup after loading the view, typically from a nib.
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 
     override func tableView(_ tableView: UITableView,
                             numberOfRowsInSection section: Int) -> Int {
-        return items.count
+        return tasks.count
     }
   
     override func tableView(_ tableView: UITableView,
@@ -40,11 +67,8 @@ class BucketListViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(
             withIdentifier: "MyCell", for: indexPath)
         
-        print(cell)
-        guard let text = items[indexPath.row].text else {
-            return cell
-        }
-        cell.textLabel?.text = text
+        
+        cell.textLabel?.text = tasks[indexPath.row].objective
         return cell
     }
     
@@ -53,21 +77,6 @@ class BucketListViewController: UITableViewController {
                             accessoryButtonTappedForRowWith indexPath: IndexPath) {
         performSegue(withIdentifier: "EditItemSegue", sender: indexPath)
 
-    }
-    
-    override func tableView(_ tableView: UITableView,
-                            commit editingStyle: UITableViewCellEditingStyle,
-                            forRowAt indexPath: IndexPath) {
-        managedObjectContext.delete(items[indexPath.row])
-        items.remove(at: indexPath.row)
-        
-        do {
-            try managedObjectContext.save()
-        } catch {
-            print("\(error)")
-        }
-        
-        tableView.reloadData()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -79,28 +88,37 @@ class BucketListViewController: UITableViewController {
         
         addItemViewController.delegate = self
 
-        
-        if segue.identifier == "EditItemSegue" {
-            
-            let indexPath = sender as! IndexPath
-            let item = items[indexPath.row]
-            
-            addItemViewController.delegate = self
-            addItemViewController.indexPath = indexPath
-            addItemViewController.item = item.text
+    }
+    
+    func loadTasks(fromJsonData data: NSDictionary) {
+        guard let tasksDataArray = data.value(forKey: "tasks") as? NSArray else { return }
+        self.tasks = []
+        for taskData in tasksDataArray {
+            guard let taskData = taskData as? NSDictionary else { return }
+            self.tasks.append(
+                Task(objective: "\(taskData.value(forKey: "objective") ?? "nil")",
+                    createdAt: "\(taskData.value(forKey: "createdAt") ??  "nil")"
+                )
+            )
+            print(self.tasks)
         }
     }
     
-    func fetchAllItems() {
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "BucketListItem")
-        do {
-            let result = try managedObjectContext.fetch(request)
-            print(result)
-            items = result as! [BucketListItem]
-        } catch {
-            print("\(error)")
+    func fetchAllTasks() {
+        TaskModel.getAllTasks() { data, response, error in
+            do {
+                if let tasks = try JSONSerialization.jsonObject(
+                        with: data!, options: .mutableContainers
+                        ) as? NSDictionary {
+                    self.loadTasks(fromJsonData: tasks)
+                    self.tableView.reloadData()
+                }
+            } catch {
+                print("Something went wrong")
+            }
         }
     }
+
 }
 
 // MARK: - AddItemViewControllerDelegate
@@ -112,28 +130,19 @@ extension BucketListViewController: AddItemViewControllerDelegate {
     }
     
     func itemSaved(by controller: AddItemViewController,
-                   withText text: String,
+                   withObjective objective: String,
                    at indexPath: IndexPath?) {
         
         if let indexPath = indexPath {
-            let item = items[indexPath.row]
-            item.text = text
+//            let item = items[indexPath.row]
+//            item.text = text
             
         } else {
-            print("CREATING ITEM")
-            let item = NSEntityDescription.insertNewObject(
-                forEntityName: "BucketListItem",
-                into: managedObjectContext) as! BucketListItem
-            item.text = text
-            items.append(item)
+            print("SENDING POST REQUEST FOR: \(objective)")
+            TaskModel.addTaskWithObjective(objective: objective) { data, response, error in
+                self.fetchAllTasks()
+            }
         }
-        
-        do {
-            try managedObjectContext.save()
-        } catch {
-            print("\(error)")
-        }
-        
         tableView.reloadData()
         
         dismiss(animated: true, completion: nil)

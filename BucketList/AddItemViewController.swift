@@ -23,7 +23,7 @@ class AddItemViewController: UITableViewController {
     @IBAction func saveButtonPressed(_ sender: UIBarButtonItem) {
         guard let text = itemTextField.text else { return }
         delegate?.itemSaved(by: self,
-                            withText: text,
+                            withObjective: text,
                             at: indexPath)
     }
     

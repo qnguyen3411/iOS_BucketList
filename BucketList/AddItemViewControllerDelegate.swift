@@ -10,7 +10,7 @@ import UIKit
 
 protocol AddItemViewControllerDelegate: class {
     func itemSaved(by controller: AddItemViewController,
-                   withText text: String,
+                   withObjective objective: String,
                    at indexPath: IndexPath?)
     func cancelButtonPressed(by controller: AddItemViewController)
 }

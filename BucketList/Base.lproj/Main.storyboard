@@ -33,6 +33,11 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Bucket List" id="7mz-mQ-3bZ">
+                        <barButtonItem key="leftBarButtonItem" systemItem="search" id="qGX-D5-q6Y">
+                            <connections>
+                                <action selector="searchButtonPressed:" destination="o8Z-KX-MkE" id="gnS-sH-BCl"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="kfo-T9-GjV">
                             <connections>
                                 <segue destination="jTV-Ro-MML" kind="presentation" identifier="AddItemSegue" id="Tyv-se-IQU"/>
