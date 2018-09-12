@@ -26,15 +26,46 @@ class TaskModel {
             (_ data: Data?,
             _ response: URLResponse?,
             _ error: Error?) -> Void) {
-        
+        print("WERE IN THAT STATIC FUNCTION NOW")
         // Create the url to request
-        if let urlToReq = URL(string: "open http://localhost:8000/tasks") {
+        if let urlToReq = URL(string: "http://localhost:8000/tasks") {
             // Create an NSMutableURLRequest using the url. This Mutable Request will allow us to modify the headers.
             var request = URLRequest(url: urlToReq)
             // Set the method to POST
             request.httpMethod = "POST"
             // Create some bodyData and attach it to the HTTPBody
             let bodyData = "objective=\(objective)"
+            request.httpBody = bodyData.data(using: .utf8)
+            // Create the session
+            let session = URLSession.shared
+            let task = session.dataTask(with: request as URLRequest, completionHandler: completionHandler)
+            task.resume()
+        }
+    }
+    
+    static func deleteTaskWithId(_ id: Int) {
+        let url = URL(string: "http://localhost:8000/tasks/\(id)/delete")
+        let session = URLSession.shared
+        let task = session.dataTask(with: url!)
+        task.resume()
+    }
+    
+    static func updateTaskWithId(
+        _ id: Int,
+        newObjective: String,
+        completionHandler: @escaping
+            (_ data: Data?,
+            _ response: URLResponse?,
+            _ error: Error?) -> Void) {
+        
+        if let urlToReq = URL(string: "http://localhost:8000/tasks/\(id)/update") {
+            print("UPDATING TASK WITH ID \(id) NEW OBJECTIVE \(newObjective)")
+            // Create an NSMutableURLRequest using the url. This Mutable Request will allow us to modify the headers.
+            var request = URLRequest(url: urlToReq)
+            // Set the method to POST
+            request.httpMethod = "POST"
+            // Create some bodyData and attach it to the HTTPBody
+            let bodyData = "objective=\(newObjective)"
             request.httpBody = bodyData.data(using: .utf8)
             // Create the session
             let session = URLSession.shared

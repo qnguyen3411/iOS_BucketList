@@ -22,6 +22,8 @@ class AddItemViewController: UITableViewController {
     
     @IBAction func saveButtonPressed(_ sender: UIBarButtonItem) {
         guard let text = itemTextField.text else { return }
+        print("SENDING TO DELEGATE WITH OBJECTIVE \(text)")
+        print("HERES THE INDEXPATH \(indexPath)")
         delegate?.itemSaved(by: self,
                             withObjective: text,
                             at: indexPath)
@@ -29,6 +31,7 @@ class AddItemViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print(delegate)
         if let item = item {
             itemTextField.text = item
         }
